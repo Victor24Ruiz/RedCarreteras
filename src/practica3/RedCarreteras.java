@@ -102,8 +102,8 @@ public class RedCarreteras {
 		// TO DO
 		int res = -1;
 		if (red.get(una).containsKey(otra))
-			return red.get(una).get(otra);
-		return -1;
+			res = red.get(una).get(otra);
+		return res;
 	}
 
 	/**

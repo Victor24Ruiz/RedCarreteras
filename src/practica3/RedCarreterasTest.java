@@ -51,7 +51,7 @@ public class RedCarreterasTest {
 				fail("No lanza la excepación");
 			} catch (InvalidParameterException e) {
 				System.out.println("  RESULTADO: Lanza la excepción");
-			}			
+			}
 	}
 	
 	private String[][] testAnadeTramoData = {
