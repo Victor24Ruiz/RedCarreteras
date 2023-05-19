@@ -3,7 +3,16 @@ package practica3;
 import java.security.InvalidParameterException;
 import java.util.*;
 
+	/**
+	 * Clase
+	 *
+	 * Consiste en una red imaginaria de tramos de carretera
+	 * Une cada ciudad con otra y les asigna una distancia entre ellas
+	 */
 public class RedCarreteras {
+	/**
+	 * Red de carreteras con un mapa dentro de otro, es inmutable una vez creado
+	 */
 	private Map<String, Map<String, Integer>> red;
 
 	/**
@@ -64,25 +73,24 @@ public class RedCarreteras {
 		Map<String, Integer> aux = new HashMap<>();
 		Map<String, Integer> aux2 = new HashMap<>();
 		validarTramo(una, otra, distancia);
+		int distanciaLocal = -1;
 		aux.put(otra, distancia);
-		aux2.put(una, distancia);
 		if (!red.containsKey(una))
 			red.put(una, aux);
-		else if (!red.get(una).containsKey(otra))
-			red.get(una).put(otra, distancia);
-		else if (red.get(una).containsKey(otra)) {
-			red.get(una).put(otra, distancia);
-			return distancia;
+		else {
+			Map<String, Integer> map = red.get(una);
+			if (map.containsKey(otra))
+				distanciaLocal = distancia;
+			map.put(otra, distancia);
 		}
+		aux2.put(una, distancia);
 		if (!red.containsKey(otra))
 			red.put(otra, aux2);
-		else if (!red.get(otra).containsKey(una))
-			red.get(otra).put(una, distancia);
-		else if (red.get(otra).containsKey(una)) {
-			red.get(otra).put(una, distancia);
-			return distancia;
+		else {
+			Map<String, Integer> map = red.get(otra);
+			map.put(una, distancia);
 		}
-		return -1;
+		return distanciaLocal;
 	}
 
 	/**
@@ -92,6 +100,7 @@ public class RedCarreteras {
 	 */
 	public int existeTramo(String una, String otra) {
 		// TO DO
+		int res = -1;
 		if (red.get(una).containsKey(otra))
 			return red.get(una).get(otra);
 		return -1;
@@ -131,24 +140,31 @@ public class RedCarreteras {
 		// TODO
 		ListIterator<String> siguiente = camino.listIterator();
 		ListIterator<String> it = camino.listIterator();
-		if (camino.size() <= 0)
-			return -1;
-		else if (camino.size() == 1)
-			return 0;
 		int distancia = 0;
-		siguiente.next();
-		while (siguiente.hasNext()) {
-			String ciudad1 = it.next();
-			String ciudad2 = siguiente.next();
-			if (ciudad1 == null || ciudad2 == null)
-				return -1;
-			if (red.get(ciudad1).containsKey(ciudad2))
-				distancia += existeTramo(ciudad1, ciudad2);
-			else if (ciudad1.equals(ciudad2));
-			else
-				return -1;
+		if (camino.isEmpty())
+			distancia = -1;
+		else if (variasCiudades(camino)) {
+			siguiente.next();
+			while (siguiente.hasNext()) {
+				String ciudad1 = it.next();
+				String ciudad2 = siguiente.next();
+				if (ciudad1 == null || ciudad2 == null) {
+					distancia = -1;
+					break;
+				}
+				if (red.get(ciudad1).containsKey(ciudad2))
+					distancia += existeTramo(ciudad1, ciudad2);
+				else if (!ciudad1.equals(ciudad2)) {
+					distancia = -1;
+					break;
+				}
+			}
 		}
 		return distancia;
+	}
+
+	public boolean variasCiudades(List<String> tamanyo) {
+		return tamanyo.size() > 1;
 	}
 
 }
